@@ -1,0 +1,37 @@
+{
+    "name": "yoeb/paytr",
+    "description": "YOEB.NET",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Yoeb\\Paytr\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Yoeb\\Paytr\\YoebServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "YOEB",
+            "email": "support@yoeb.net"
+        },
+        {
+            "name": "Berkay YILDRIRIM",
+            "email": "i@berkay.me"
+        },
+        {
+            "name": "Samet GÖKTEPE",
+            "email": "sametgoktepe74@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "laravel/laravel": "*",
+        "php": "^8.0.2"
+    }
+}
