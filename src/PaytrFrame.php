@@ -2,12 +2,11 @@
 
 namespace Yoeb\Paytr;
 
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Yoeb\Paytr\Models\PaytrFrame as ModelsPaytrFrame;
 use Yoeb\Paytr\Enum\PaytrCurrency;
-use Yoeb\Paytr\Enum\PaytrLinkType;
-use Exception;
 use Illuminate\Support\Facades\Http;
-
+use Yoeb\Paytr\Exception\PaytrExceptions;
 
 class PaytrFrame
 {
@@ -127,6 +126,13 @@ class PaytrFrame
     }
 
     public static function create() {
+        $validateEnv = Paytr::validateEnv();
+        if(!empty($validateEnv)){
+            throw new HttpResponseException(response()->json([
+                "status"    => false,
+            ]));
+        }
+
         $merchant_id = env("PAYTR_MERCHANT_ID");
         $merchant_key = env("PAYTR_MERCHANT_KEY");
         $merchant_salt = env("PAYTR_MERCHANT_SALT");
@@ -193,8 +199,8 @@ class PaytrFrame
                     "db_data"   => $db,
                 ])->getData();
         }
-        
-                return Paytr::error($res["reason"], "PTR0")->getData();
+
+        return Paytr::error($res["reason"], "PTR0")->getData();
     }
 
 
@@ -223,7 +229,7 @@ class PaytrFrame
             ]);
             return Paytr::error("Payment error: " . request()->failed_reason_msg, request()->failed_reason_code)->getData();
         }
-    
+
     }
 
 }
