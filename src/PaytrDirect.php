@@ -190,7 +190,7 @@ class PaytrDirect
         }
 
         self::$merchant_oid = "direct" . self::$merchant_oid;
-        $hash_str = $merchant_id . self::$user_ip . self::$merchant_oid . self::$email . self::$payment_amount . self::$payment_type . self::$installment_count. self::$currency. self::$test_mode. self::$non_3d;
+        $hash_str = $merchant_id . self::$user_ip . self::$merchant_oid . self::$email . self::$payment_amount . self::$payment_type . self::$installment_count . self::$currency . self::$test_mode . self::$non_3d;
         $paytr_token = base64_encode(hash_hmac('sha256', $hash_str . $merchant_salt, $merchant_key, true));
 
         $response = Http::asForm()->post('https://www.paytr.com/odeme/api/get-token', [
@@ -200,10 +200,27 @@ class PaytrDirect
             'email'             => self::$email,
             'payment_amount'    => self::$payment_amount,
             'payment_type'      => self::$payment_type,
+            'paytr_token'       => $paytr_token,
             'installment_count' => self::$installment_count,
+            'card_type'         => self::$card_type,
             'currency'          => self::$currency,
+            'client_lang'       => self::$client_lang,
             'test_mode'         => self::$test_mode,
             'non_3d'            => self::$non_3d,
+            'non3d_test_failed' => self::$non3d_test_failed,
+            'cc_owner'          => self::$cc_owner,
+            'card_number'       => self::$card_number,
+            'expiry_month'      => self::$expiry_month,
+            'expiry_year'       => self::$expiry_year,
+            'cvv'               => self::$cvv,
+            'merchant_ok_url'   => self::$merchant_ok_url,
+            'merchant_fail_url' => self::$merchant_fail_url,
+            'user_name'         => self::$user_name,
+            'user_phone'        => self::$user_phone,
+            'user_address'      => self::$user_address,
+            'user_basket'       => self::$user_basket,
+            'debug_on'          => self::$debug_on,
+            'sync_mode'         => self::$sync_mode,
         ]);
         $res = $response->json();
         if ($res['status'] == 'success') {
@@ -214,7 +231,7 @@ class PaytrDirect
                 'email'             => self::$email,
                 'payment_amount'    => self::$payment_amount,
                 'payment_type'      => self::$payment_type,
-                'paytr_token'       => $paytr_token,
+                'paytr_token'       => $res["token"],
                 'installment_count' => self::$installment_count,
                 'card_type'         => self::$card_type,
                 'currency'          => self::$currency,
@@ -239,17 +256,18 @@ class PaytrDirect
         }
     }
 
-    public static function validate(){
+    public static function validate()
+    {
         $merchant_key = env("PAYTR_MERCHANT_KEY");
         $merchant_salt = env("PAYTR_MERCHANT_SALT");
 
-        $hash = base64_encode( hash_hmac('sha256', request()->merchant_oid . $merchant_salt . request()->status . request()->total_amount, $merchant_key, true) );
+        $hash = base64_encode(hash_hmac('sha256', request()->merchant_oid . $merchant_salt . request()->status . request()->total_amount, $merchant_key, true));
 
-        if($hash != request()->hash) {
+        if ($hash != request()->hash) {
             return Paytr::error("Hash does not match.", "HNM0")->getData();
         }
 
-        if( request()->status == 'success' ) {
+        if (request()->status == 'success') {
             ModelsPaytrDirect::where("merchant_oid", request()->merchant_oid)->update([
                 "status"    => true
             ]);
@@ -262,6 +280,5 @@ class PaytrDirect
             ]);
             return Paytr::error("Payment error: " . request()->failed_reason_msg, request()->failed_reason_code)->getData();
         }
-    
     }
 }
