@@ -142,7 +142,6 @@ class PaytrFrame
 
         $user_basket_encoded = base64_encode(json_encode(self::$user_basket));
 
-        self::$merchant_oid = "frame".self::$merchant_oid;
 
         $hash_str = $merchant_id . self::$user_ip . self::$merchant_oid . self::$email . self::$payment_amount . $user_basket_encoded . self::$no_installment . self::$max_installment . self::$currency . self::$test_mode;
         $paytr_token = base64_encode(hash_hmac('sha256', $hash_str . $merchant_salt, $merchant_key, true));

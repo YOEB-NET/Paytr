@@ -189,7 +189,6 @@ class PaytrDirect
             self::$user_ip = request()->ip();
         }
 
-        self::$merchant_oid = "direct" . self::$merchant_oid;
         $hash_str = $merchant_id . self::$user_ip . self::$merchant_oid . self::$email . self::$payment_amount . self::$payment_type . self::$installment_count . self::$currency . self::$test_mode . self::$non_3d;
         $paytr_token = base64_encode(hash_hmac('sha256', $hash_str . $merchant_salt, $merchant_key, true));
 
