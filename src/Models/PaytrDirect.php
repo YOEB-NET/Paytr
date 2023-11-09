@@ -39,6 +39,7 @@ class PaytrDirect extends Model
         'debug_on',
         'sync_mode',
         'status',
+        'error_code',
         'error_message',
     ];
 }

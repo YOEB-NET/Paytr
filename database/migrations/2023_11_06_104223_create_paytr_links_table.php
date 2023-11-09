@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('callback_id')->nullable()->comment('Geri dönüş id');
             $table->tinyInteger('debug_on')->nullable()->comment('0: off, 1: on');
             $table->integer('status')->nullable();
+            $table->string('error_code')->nullable();
             $table->string('error_message')->nullable();
             $table->timestamps();
         });

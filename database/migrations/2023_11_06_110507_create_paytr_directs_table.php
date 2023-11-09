@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('paytr_directs', function (Blueprint $table) {
             $table->id();
             $table->string('merchant_id')->nullable()->comment('Mağaza numarası');
-            $table->string('paytr_token')->nullable()->comment('Mağaza token'); 
+            $table->string('paytr_token')->nullable()->comment('Mağaza token');
             $table->string('user_ip')->nullable()->comment('Sipariş verenin IP adresi');
             $table->string('merchant_oid')->nullable()->comment('Sipariş numarası');
             $table->string('email')->nullable()->comment('Sipariş verenin eposta adresi');
@@ -38,8 +38,9 @@ return new class extends Migration
             $table->string('user_phone')->comment('Sipariş verenin telefon numarası')->nullable();
             $table->json('user_basket')->comment('Sepet bilgisi')->default('[]');
             $table->tinyInteger('debug_on')->comment('0: off, 1: on')->nullable();
-            $table->tinyInteger('sync_mode')->comment('0: off, 1: on')->nullable();    
+            $table->tinyInteger('sync_mode')->comment('0: off, 1: on')->nullable();
             $table->integer('status')->nullable()->comment('https://dev.paytr.com/direkt-api/direkt-api-2-adim');
+            $table->string('error_code')->nullable();
             $table->string('error_message')->nullable();
             $table->timestamps();
         });

@@ -30,6 +30,7 @@ class PaytrLink extends Model
         'debug_on',
         'paytr_token',
         'status',
+        'error_code',
         'error_message',
     ];
 
