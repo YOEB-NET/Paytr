@@ -34,7 +34,7 @@ class PaytrTransfer
     }
 
     public static function merchantOid($merchant_oid) {
-        self::$merchant_oid = "transfer".$merchant_oid;
+        self::$merchant_oid = $merchant_oid;
         return new static;
     }
 
