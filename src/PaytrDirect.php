@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace Yoeb\Paytr;
 
 use App\Models\PaytrDirect as ModelsPaytrDirect;
 use App\Service\Enum\PaytrCurrency;
