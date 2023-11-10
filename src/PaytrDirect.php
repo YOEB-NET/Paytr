@@ -2,38 +2,38 @@
 
 namespace Yoeb\Paytr;
 
-use App\Models\PaytrDirect as ModelsPaytrDirect;
-use App\Service\Enum\PaytrCurrency;
+use Yoeb\Paytr\Models\PaytrDirect as ModelsPaytrDirect;
+use Yoeb\Paytr\Enum\PaytrCurrency;
 use Illuminate\Support\Facades\Http;
 
 class PaytrDirect
 {
-    protected $paytr_token = "";
-    protected $user_ip = "";
-    protected $merchant_oid = "";
-    protected $email = "";
-    protected $payment_type = "";
-    protected $payment_amount = 0;
-    protected $installment_count = 0;
-    protected $card_type = "";
-    protected $currency = PaytrCurrency::TL->value ?? PaytrCurrency::TL;
-    protected $client_lang = "tr";
-    protected $test_mode = 0;
-    protected $non_3d = 0;
-    protected $non3d_test_failed = 0;
-    protected $cc_owner = "";
-    protected $card_number = "";
-    protected $expiry_month = "";
-    protected $expiry_year = "";
-    protected $cvv = "";
-    protected $merchant_ok_url = "";
-    protected $merchant_fail_url = "";
-    protected $user_name = "";
-    protected $user_phone = "";
-    protected $user_address = "";
-    protected $user_basket = [];
-    protected $debug_on = 0;
-    protected $sync_mode = 0;
+    protected static $paytr_token = "";
+    protected static $user_ip = "";
+    protected static $merchant_oid = "";
+    protected static $email = "";
+    protected static $payment_type = "card";
+    protected static $payment_amount = 0;
+    protected static $installment_count = 0;
+    protected static $card_type = "";
+    protected static $currency = PaytrCurrency::TL->value ?? PaytrCurrency::TL;
+    protected static $client_lang = "tr";
+    protected static $test_mode = 0;
+    protected static $non_3d = 0;
+    protected static $non3d_test_failed = 0;
+    protected static $cc_owner = "";
+    protected static $card_number = "";
+    protected static $expiry_month = "";
+    protected static $expiry_year = "";
+    protected static $cvv = "";
+    protected static $merchant_ok_url = "";
+    protected static $merchant_fail_url = "";
+    protected static $user_name = "";
+    protected static $user_phone = "";
+    protected static $user_address = "";
+    protected static $user_basket = [];
+    protected static $debug_on = 0;
+    protected static $sync_mode = 0;
 
     public static function userIp($user_ip)
     {
@@ -161,7 +161,7 @@ class PaytrDirect
         return (new static);
     }
 
-    public static function paymetAmount($payment_amount)
+    public static function paymentAmount($payment_amount)
     {
         self::$payment_amount = $payment_amount;
         return (new static);
@@ -221,8 +221,13 @@ class PaytrDirect
             'debug_on'          => self::$debug_on,
             'sync_mode'         => self::$sync_mode,
         ]);
-        $res = $response->json();
-        if ($res['status'] == 'success') {
+
+        if(!self::$sync_mode){
+            $res = $response->body();
+        }else{
+            $res = $response->json();
+        }
+        if (($res['status'] ?? "failed") == 'success' || self::$sync_mode != 1) {
             $db = ModelsPaytrDirect::create([
                 'merchant_id'       => $merchant_id,
                 'user_ip'           => self::$user_ip,
@@ -230,7 +235,7 @@ class PaytrDirect
                 'email'             => self::$email,
                 'payment_amount'    => self::$payment_amount,
                 'payment_type'      => self::$payment_type,
-                'paytr_token'       => $res["token"],
+                'paytr_token'       => $paytr_token,
                 'installment_count' => self::$installment_count,
                 'card_type'         => self::$card_type,
                 'currency'          => self::$currency,
@@ -252,6 +257,8 @@ class PaytrDirect
                 'sync_mode'         => self::$sync_mode,
             ]);
         }
+
+        return $res;
     }
 
     // ------------------- Validate --------------------

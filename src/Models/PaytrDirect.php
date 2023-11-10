@@ -8,9 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class PaytrDirect extends Model
 {
     use HasFactory;
-
-    protected $table = 'paytr_direct_orders';
-
     protected $fillable = [
         'merchant_id',
         'paytr_token',
@@ -41,5 +38,9 @@ class PaytrDirect extends Model
         'status',
         'error_code',
         'error_message',
+    ];
+
+    protected $casts = [
+        "user_basket"   => "array"
     ];
 }
