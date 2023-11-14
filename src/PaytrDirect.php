@@ -217,7 +217,7 @@ class PaytrDirect
             'user_name'         => self::$user_name,
             'user_phone'        => self::$user_phone,
             'user_address'      => self::$user_address,
-            'user_basket'       => self::$user_basket,
+            'user_basket'       => json_encode(self::$user_basket),
             'debug_on'          => self::$debug_on,
             'sync_mode'         => self::$sync_mode,
         ]);
