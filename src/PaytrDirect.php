@@ -271,7 +271,7 @@ class PaytrDirect
         $hash = base64_encode(hash_hmac('sha256', request()->merchant_oid . $merchant_salt . request()->status . request()->total_amount, $merchant_key, true));
 
         if ($hash != request()->hash) {
-            return Paytr::error("Hash does not match.", "HNM0")->getData();
+            return Paytr::errorThrow("Hash does not match.", "HNM0")->getData();
         }
 
         if (request()->status == 'success') {
