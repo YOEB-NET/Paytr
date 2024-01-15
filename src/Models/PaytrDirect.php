@@ -9,7 +9,6 @@ class PaytrDirect extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'merchant_id',
         'paytr_token',
         'user_ip',
         'merchant_oid',

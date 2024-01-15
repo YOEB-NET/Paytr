@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('paytr_links', function (Blueprint $table) {
             $table->id();
-            $table->string('merchant_id')->nullable()->comment('Mağaza numarası');
             $table->string('name')->nullable()->comment('Ürün adı');
             $table->string('price')->nullable()->comment('Ürün fiyatı');
             $table->string('currency')->nullable()->comment('TL, EUR, USD, GBP, JPY, RUB, CHF');

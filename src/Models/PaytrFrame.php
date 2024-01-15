@@ -12,7 +12,6 @@ class PaytrFrame extends Model
     protected $table = 'paytr_frames';
 
     protected $fillable = [
-        'merchant_id',
         'user_ip',
         'merchant_oid',
         'email',

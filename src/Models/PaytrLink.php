@@ -12,7 +12,6 @@ class PaytrLink extends Model
     protected $table = 'paytr_orders';
 
     protected $fillable = [
-        'merchant_id',
         'name',
         'price',
         'currency',

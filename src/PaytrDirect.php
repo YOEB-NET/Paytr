@@ -181,6 +181,8 @@ class PaytrDirect
 
     public static function create()
     {
+        Paytr::validateEnv();
+
         $merchant_id = env("PAYTR_MERCHANT_ID");
         $merchant_key = env("PAYTR_MERCHANT_KEY");
         $merchant_salt = env("PAYTR_MERCHANT_SALT");
@@ -227,6 +229,7 @@ class PaytrDirect
         }else{
             $res = $response->json();
         }
+
         if (($res['status'] ?? "failed") == 'success' || self::$sync_mode != 1) {
             $db = ModelsPaytrDirect::create([
                 'merchant_id'       => $merchant_id,
@@ -271,21 +274,21 @@ class PaytrDirect
         $hash = base64_encode(hash_hmac('sha256', request()->merchant_oid . $merchant_salt . request()->status . request()->total_amount, $merchant_key, true));
 
         if ($hash != request()->hash) {
-            return Paytr::errorThrow("Hash does not match.", "HNM0")->getData();
+            return Paytr::error("Hash does not match.", "HNM0");
         }
 
         if (request()->status == 'success') {
             ModelsPaytrDirect::where("merchant_oid", request()->merchant_oid)->update([
                 "status"    => true
             ]);
-            return Paytr::data("Payment success.")->getData();
+            return Paytr::data("Payment success.");
         } else {
             ModelsPaytrDirect::where("merchant_oid", request()->merchant_oid)->update([
                 "status"        => false,
                 "error_code"    => request()->failed_reason_code,
                 "error_message" => request()->failed_reason_msg,
             ]);
-            return Paytr::error("Payment error: " . request()->failed_reason_msg, request()->failed_reason_code)->getData();
+            return Paytr::error("Payment error: " . request()->failed_reason_msg, request()->failed_reason_code);
         }
     }
 }

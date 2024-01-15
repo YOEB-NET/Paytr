@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('paytr_frames', function (Blueprint $table) {
             $table->id();
-            $table->string('merchant_id')->nullable()->comment('Mağaza numarası');
             $table->string('user_ip')->nullable()->comment('Sipariş verenin IP adresi');
             $table->string('merchant_oid')->nullable()->comment('Sipariş numarası');
             $table->string('email')->nullable()->comment('Sipariş verenin eposta adresi');

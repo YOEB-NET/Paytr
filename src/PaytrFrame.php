@@ -2,7 +2,6 @@
 
 namespace Yoeb\Paytr;
 
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Yoeb\Paytr\Models\PaytrFrame as ModelsPaytrFrame;
 use Yoeb\Paytr\Enum\PaytrCurrency;
 use Illuminate\Support\Facades\Http;
@@ -127,11 +126,6 @@ class PaytrFrame
 
     public static function create() {
         $validateEnv = Paytr::validateEnv();
-        if(!empty($validateEnv)){
-            throw new HttpResponseException(response()->json([
-                "status"    => false,
-            ]));
-        }
 
         $merchant_id = env("PAYTR_MERCHANT_ID");
         $merchant_key = env("PAYTR_MERCHANT_KEY");
@@ -196,10 +190,10 @@ class PaytrFrame
                     <iframe src="https://www.paytr.com/odeme/guvenli/'.$res["token"].'" id="paytriframe" frameborder="0" scrolling="no" style="width: 100%;"></iframe>
                     <script>iFrameResize({},\'#paytriframe\');</script>',
                     "db_data"   => $db,
-                ])->getData();
+                ]);
         }
 
-        return Paytr::errorThrow($res["reason"], "PTR0")->getData();
+        return Paytr::error($res["reason"], "PTR0");
     }
 
 
@@ -212,21 +206,21 @@ class PaytrFrame
         $hash = base64_encode( hash_hmac('sha256', request()->merchant_oid . $merchant_salt . request()->status . request()->total_amount, $merchant_key, true) );
 
         if($hash != request()->hash) {
-            return Paytr::errorThrow("Hash does not match.", "HNM0")->getData();
+            return Paytr::error("Hash does not match.", "HNM0");
         }
 
         if( request()->status == 'success' ) {
             ModelsPaytrFrame::where("merchant_oid", request()->merchant_oid)->update([
                 "status"    => true
             ]);
-            return Paytr::data("Payment success.")->getData();
+            return Paytr::data("Payment success.");
         } else {
             ModelsPaytrFrame::where("merchant_oid", request()->merchant_oid)->update([
                 "status"        => false,
                 "error_code"    => request()->failed_reason_code,
                 "error_message" => request()->failed_reason_msg,
             ]);
-            return Paytr::error("Payment error: " . request()->failed_reason_msg, request()->failed_reason_code)->getData();
+            return Paytr::error("Payment error: " . request()->failed_reason_msg, request()->failed_reason_code);
         }
 
     }

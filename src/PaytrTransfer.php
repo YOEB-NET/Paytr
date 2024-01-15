@@ -9,24 +9,17 @@ use Illuminate\Support\Facades\Http;
 
 class PaytrTransfer
 {
-    protected static $merchant_id = ""; 
     protected static $user_ip = "";
     protected static $merchant_oid = "";
     protected static $email = "";
     protected static $payment_amount = 0;
     protected static $user_name = "";
     protected static $user_phone = "";
-    protected static $tc_no_last5 = ""; 
+    protected static $tc_no_last5 = "";
     protected static $bank = "";
     protected static $test_mode = 0;
     protected static $debug_on = 0;
     protected static $timeout_limit = 30;
-
-
-    public static function merchantId($merchant_id) {
-        self::$merchant_id = $merchant_id;
-        return new static;
-    }
 
     public static function userIp($user_ip) {
         self::$user_ip = $user_ip;
@@ -91,7 +84,7 @@ class PaytrTransfer
         $paytr_token=base64_encode(hash_hmac('sha256',$hash_str.$merchant_salt,$merchant_key,true));
 
         $response = Http::asForm()->post('https://www.paytr.com/odeme/api/get-token',[
-            'merchant_id'   => self::$merchant_id,
+            'merchant_id'   => $merchant_id,
             'user_ip'       => self::$user_ip,
             'merchant_oid'  => self::$merchant_oid,
             'email'         => self::$email,
@@ -105,7 +98,7 @@ class PaytrTransfer
         $res = $response->json();
         if($res["status"] == "success"){
             $db = ModelsPaytrTransfer::create([
-                    'merchant_id'    => self::$merchant_id,
+                    'merchant_id'    => $merchant_id,
                     'user_ip'        => self::$user_ip,
                     'merchant_oid'   => self::$merchant_oid,
                     'email'          => self::$email,
@@ -127,10 +120,10 @@ class PaytrTransfer
                     <iframe src="https://www.paytr.com/odeme/api/'.$res["token"].'" id="paytriframe" frameborder="0" scrolling="no" style="width: 100%;"></iframe>
                     <script>iFrameResize({},\'#paytriframe\');</script>',
                     "db_data"   => $db,
-                ])->getData();
+                ]);
         }
-        
-                return Paytr::error($res["reason"], "PTR0")->getData();
+
+                return Paytr::error($res["reason"], "PTR0");
     }
 
 
@@ -143,23 +136,23 @@ class PaytrTransfer
         $hash = base64_encode( hash_hmac('sha256', request()->merchant_oid . $merchant_salt . request()->status . request()->total_amount, $merchant_key, true) );
 
         if($hash != request()->hash) {
-            return Paytr::error("Hash does not match.", "HNM0")->getData();
+            return Paytr::error("Hash does not match.", "HNM0");
         }
 
         if( request()->status == 'success' ) {
             ModelsPaytrTransfer::where("merchant_oid", request()->merchant_oid)->update([
                 "status"    => true
             ]);
-            return Paytr::data("Payment success.")->getData();
+            return Paytr::data("Payment success.");
         } else {
             ModelsPaytrTransfer::where("merchant_oid", request()->merchant_oid)->update([
                 "status"        => false,
                 "error_code"    => request()->failed_reason_code,
                 "error_message" => request()->failed_reason_msg,
             ]);
-            return Paytr::error("Payment error: " . request()->failed_reason_msg, request()->failed_reason_code)->getData();
+            return Paytr::error("Payment error: " . request()->failed_reason_msg, request()->failed_reason_code);
         }
-    
+
     }
 
 }
