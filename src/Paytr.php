@@ -3,9 +3,29 @@
 namespace Yoeb\Paytr;
 
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Http;
 
 class Paytr
 {
+    protected static $url = "https://www.paytr.com";
+
+    static function body($bodys = []) {
+        $base = [
+            "merchant_id" => env("PAYTR_MERCHANT_ID")
+        ];
+
+        $base = array_merge($bodys, $base);
+        return $base;
+    }
+
+    static function post($url, $bodys = [], $headers = []) {
+
+        $res = Http::asForm()->timeout(env("PAYTR_TIMEOUT", 120))
+        ->withHeaders($headers)->post(self::$url . $url, self::body($bodys));
+        return $res;
+    }
+
+
 
     public static function data($message, $data = null)
     {

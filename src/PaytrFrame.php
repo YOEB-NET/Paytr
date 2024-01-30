@@ -140,7 +140,7 @@ class PaytrFrame
         $hash_str = $merchant_id . self::$user_ip . self::$merchant_oid . self::$email . self::$payment_amount . $user_basket_encoded . self::$no_installment . self::$max_installment . self::$currency . self::$test_mode;
         $paytr_token = base64_encode(hash_hmac('sha256', $hash_str . $merchant_salt, $merchant_key, true));
 
-        $response = Http::asForm()->post('https://www.paytr.com/odeme/api/get-token', [
+        $response = Paytr::post('/odeme/api/get-token', [
             'merchant_id'      => $merchant_id,
             'user_ip'          => self::$user_ip,
             'merchant_oid'     => self::$merchant_oid,

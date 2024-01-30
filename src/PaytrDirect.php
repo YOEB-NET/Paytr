@@ -4,7 +4,6 @@ namespace Yoeb\Paytr;
 
 use Yoeb\Paytr\Models\PaytrDirect as ModelsPaytrDirect;
 use Yoeb\Paytr\Enum\PaytrCurrency;
-use Illuminate\Support\Facades\Http;
 
 class PaytrDirect
 {
@@ -194,7 +193,7 @@ class PaytrDirect
         $hash_str = $merchant_id . self::$user_ip . self::$merchant_oid . self::$email . self::$payment_amount . self::$payment_type . self::$installment_count . self::$currency . self::$test_mode . self::$non_3d;
         $paytr_token = base64_encode(hash_hmac('sha256', $hash_str . $merchant_salt, $merchant_key, true));
 
-        $response = Http::asForm()->post('https://www.paytr.com/odeme', [
+        $response = Paytr::post('/odeme', [
             'merchant_id'       => $merchant_id,
             'user_ip'           => self::$user_ip,
             'merchant_oid'      => self::$merchant_oid,
@@ -264,6 +263,7 @@ class PaytrDirect
         return $res;
     }
 
+
     // ------------------- Validate --------------------
 
     public static function validate()
@@ -291,4 +291,5 @@ class PaytrDirect
             return Paytr::error("Payment error: " . request()->failed_reason_msg, request()->failed_reason_code);
         }
     }
+
 }

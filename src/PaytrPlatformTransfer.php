@@ -75,7 +75,7 @@ class PaytrPlatformTransfer
         $paytr_token = base64_encode(hash_hmac('sha256',$hash_str.$merchant_salt,$merchant_key,true));
 
 
-        $response = Http::asForm()->post('https://www.paytr.com/odeme/platform/transfer',[
+        $response = Paytr::post('/odeme/platform/transfer',[
             'merchant_id'   => $merchant_id,
             'merchant_oid'  => self::$merchant_oid,
             'trans_id'      => self::$trans_id,
