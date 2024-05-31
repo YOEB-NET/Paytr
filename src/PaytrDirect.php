@@ -33,6 +33,8 @@ class PaytrDirect
     protected static $user_basket = [];
     protected static $debug_on = 0;
     protected static $sync_mode = 0;
+    protected static $utoken = null;
+    protected static $store_card = 0;
 
     public static function userIp($user_ip)
     {
@@ -178,6 +180,18 @@ class PaytrDirect
         return (new static);
     }
 
+    public static function utoken($utoken)
+    {
+        self::$utoken = $utoken;
+        return (new static);
+    }
+
+    public static function storeCard($store_card)
+    {
+        self::$store_card = $store_card;
+        return (new static);
+    }
+
     public static function create()
     {
         Paytr::validateEnv();
@@ -221,6 +235,8 @@ class PaytrDirect
             'user_basket'       => json_encode(self::$user_basket),
             'debug_on'          => self::$debug_on,
             'sync_mode'         => self::$sync_mode,
+            'utoken'            => self::$utoken,
+            'store_card'        => self::$store_card,
         ]);
 
         if(!self::$sync_mode){
@@ -263,7 +279,6 @@ class PaytrDirect
         return $res;
     }
 
-
     // ------------------- Validate --------------------
 
     public static function validate()
@@ -291,5 +306,4 @@ class PaytrDirect
             return Paytr::error("Payment error: " . request()->failed_reason_msg, request()->failed_reason_code);
         }
     }
-
 }
