@@ -34,6 +34,7 @@ class PaytrDirect
     protected static $debug_on = 0;
     protected static $sync_mode = 0;
     protected static $utoken = null;
+    protected static $ctoken = null;
     protected static $store_card = 0;
 
     public static function userIp($user_ip)
@@ -186,6 +187,12 @@ class PaytrDirect
         return (new static);
     }
 
+    public static function ctoken($ctoken)
+    {
+        self::$ctoken = $ctoken;
+        return (new static);
+    }
+
     public static function storeCard($store_card)
     {
         self::$store_card = $store_card;
@@ -236,6 +243,7 @@ class PaytrDirect
             'debug_on'          => self::$debug_on,
             'sync_mode'         => self::$sync_mode,
             'utoken'            => self::$utoken,
+            'ctoken'            => self::$ctoken,
             'store_card'        => self::$store_card,
         ]);
 

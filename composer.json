@@ -3,7 +3,7 @@
     "description": "YOEB.NET",
     "type": "library",
     "license": "MIT",
-    "version": "v1.1",
+    "version": "v1.2",
     "autoload": {
         "psr-4": {
             "Yoeb\\Paytr\\": "src/"
